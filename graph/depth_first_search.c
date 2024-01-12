@@ -13,11 +13,11 @@
 #define MAX 100
 
 /* 関数のプロトタイプ宣言 */
-void read_graph_data(int[][N]);  // グラフファイル読み込み
+int read_graph_data(int[][N]);   // グラフファイル読み込み
 void init_visit_flag(void);      // 訪問済みフラグの初期化関数
 void depth_first(int[][N], int); // 深さ優先探索
 void push(int[], int);           // スタックに対する操作（プッシュ）
-void pop(int[]);                 // スタックに対する操作（ポップ）
+int pop(int[]);                  // スタックに対する操作（ポップ）
 int is_S_empty(int Q[]);         // スタックに対する操作（空かどうか調べる，1: 空, -1: 空ではない）
 
 /*スタックに関するグローバル変数*/
@@ -48,27 +48,27 @@ int read_graph_data(int v[][N])
     char file_name[256];
     int i, j;
 
-    /*読み込み先のグラフのファイル名入力*/
-    printf("読み込むグラフのファイル名は？>");
+    /* 読み込み先のグラフのファイル名入力 */
+    printf("読み込むグラフのファイル名は？");
     scanf("%s", file_name);
 
     /* ファイルの読み込み */
-    /* ファイルにはスペースを区切り文字として、変の情報 0 or 1 列挙してある */
-    fp = fopen(file_name, "r"); // 読み込み専用でオープン
+    /* ファイルにはスペースを区切り文字として、辺の情報 0 or 1 を列挙してある */
+    fp = fopen(file_name, "r");
 
     if (fp == NULL) // エラー処理
     {
         printf("ファイルが開けません\n");
-        return -1; // エラーの場合-1をリターン
+        return -1; // エラーの場合は-1をリターン
     }
 
-    // 変の情報を読み込む
+    // 辺の情報を読み込む
     for (i = 0; i < N; i++)
     {
-        for (j = 0; i < N; j++)
+        for (j = 0; j < N; j++)
         {
             fscanf(fp, "%d", &v[i][j]);
-            printf("%d", v[i][j]); // デバッグのため表示する
+            printf("%d", v[i][j]);
         }
         printf("\n"); // デバッグのため表示する
     }
@@ -77,7 +77,7 @@ int read_graph_data(int v[][N])
     if (fclose(fp) != 0)
         return -1; // エラーの場合-1をリターン
 
-    return 0; // 正常終了
+    return 0;
 }
 
 /*深さ優先探索*/
@@ -87,6 +87,8 @@ void depth_first(int v[][N], int start_node)
     int S[MAX]; // スタック
 
     int C[N]; // 調査済みかどうかを表すグラフ配列
+    int orders[N];
+    int orderIndex = 0;
     int i, vk;
 
     /*手順１：スタックを空に、調査済みかどうかを表すグラフ配列Cを初期化する*/
@@ -102,6 +104,8 @@ void depth_first(int v[][N], int start_node)
     {
         /* 手順３（1）：スタックから頂点を一つ取り出す*/
         vk = pop(S);
+        orders[orderIndex] = vk;
+        orderIndex++;
 
         /*手順３（2）：vkが調査済みでなければ、（A）, (B)の処理を実行する*/
         if (C[vk] == 0)
@@ -121,6 +125,12 @@ void depth_first(int v[][N], int start_node)
             }
         }
     }
+    printf("探索順序： ");
+    for (int i = 0; i < N; i++)
+    {
+        printf("%d, ", orders[i]);
+    }
+    printf("\n");
 }
 
 void push(int S[], int x)
@@ -132,7 +142,7 @@ void push(int S[], int x)
         S[top] = x;
 }
 
-void pop(int S[])
+int pop(int S[])
 {
     int ret = -1;
     if (top == -1)
