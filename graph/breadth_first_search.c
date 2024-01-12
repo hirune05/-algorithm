@@ -31,12 +31,12 @@ int main(int argc, const char *argv[])
     if (read_graph_data(v) != 0)
         return -1;
     printf("探索開始ノードは？（0 ~ %d）", N - 1);
-    scanf("%d", start_node);
+    scanf("%d", &start_node);
 
-    printf("\n\n")
+    printf("\n\n");
 
-        // 探索開始
-        breadth_first(v, start_node);
+    // 探索開始
+    breadth_first(v, start_node);
 
     return 0;
 }
@@ -61,7 +61,7 @@ int read_graph_data(int v[][N])
         return -1; // エラーの場合は-1をリターン
     }
 
-    // 変の情報を読み込む
+    // 辺の情報を読み込む
     for (i = 0; i < N; i++)
     {
         for (j = 0; j < N; j++)
@@ -86,6 +86,8 @@ void breadth_first(int v[][N], int start_node)
 
     int InQ[N]; // キューに追加されたかどうかを表すフラグ配列（0:未追加，1:追加済）
     int C[N];   // 調査済みかどうかを表すグラフ配列（0:未調査，1: 調査済）
+    int orders[N];
+    int ordersIndex = 0;
     int i, vk;
 
     /* 手順1: キューを空（leftとrightを0にする）にし、出発点をキューに入れる */
@@ -98,10 +100,12 @@ void breadth_first(int v[][N], int start_node)
         InQ[i] = C[i] = 0;
 
     /* 手順3: キューが空でない間繰り返す処理 */
-    while (is_Q_empty(Q) != 1)
+    while (is_Q_empty(Q) != 1) // 1だと空
     {
         vk = dequeue(Q); // キューから頂点を1つ取り出す
         C[vk] = 1;       // 頂点vkを調査済みにする
+        orders[ordersIndex] = vk;
+        ordersIndex++;
 
         // vkに隣接する頂点のうち、キューに未追加かつ未調査の頂点を全てキューに入れる
         for (i = 0; i < N; i++)
@@ -112,14 +116,22 @@ void breadth_first(int v[][N], int start_node)
                 if ((InQ[i] == 0) && (C[i] == 0))
                 {
                     enqueue(Q, i); // 未追加かつ未調査の点であればキューに入れる
-                    InQ[i] = i;    // 頂点番号iはキューに追加済みにする
+                    InQ[i] = 1;    // 頂点番号iはキューに追加済みにする
                 }
             }
         }
     }
+
+    // 探索順序を表示
+    printf("探索順序： ");
+    for (i = 0; i < N; i++)
+    {
+        printf("%d, ", orders[i]);
+    }
+    printf("\n");
 }
 
-void enqueue
+void enqueue(int Q[], int x)
 {
     Q[right] = x;
     right++;
@@ -148,6 +160,7 @@ int dequeue(int Q[])
         ret = Q[left];
         left++;
         if (left == MAX)
+            left = 0;
     }
     return ret;
 }
