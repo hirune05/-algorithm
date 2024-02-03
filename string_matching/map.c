@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUCKET_SIZE 10 // ハッシュ表の大きさ
+#define P_BUCKET_SIZE 10 // ハッシュ表の大きさ
+#define S_BUCKET_SIZE 10 // ハッシュ表の大きさ
 
 typedef char KEY; // キーの型
 
@@ -20,14 +21,17 @@ typedef struct record
 } RECORD;
 
 /* グローバル変数 */
-RECORD *table[BUCKET_SIZE];
+RECORD *p_table[P_BUCKET_SIZE];
+RECORD *s_table[S_BUCKET_SIZE];
 
 /*ハッシュ表の初期化*/
 void init()
 {
     int i;
-    for (i = 0; i < BUCKET_SIZE; i++)
-        table[i] = NULL;
+    for (i = 0; i < P_BUCKET_SIZE; i++)
+        p_table[i] = NULL;
+    for (i = 0; i < S_BUCKET_SIZE; i++)
+        s_table[i] = NULL;
 }
 
 /*ハッシュ関数*/
@@ -42,7 +46,7 @@ int keyequal(KEY key1, KEY key2)
     return key1 == key2;
 }
 
-DATA *search(KEY key)
+DATA *search(RECORD **table, KEY key)
 {
     RECORD *p;
     int index;
@@ -58,12 +62,12 @@ DATA *search(KEY key)
     return NULL; // 見つからない時にはNULLを返す
 }
 
-int add(RECORD record)
+int add(RECORD **table, RECORD record)
 {
     RECORD *p;
     int index;
 
-    if (search(record.key) != NULL)
+    if (search(table, record.key) != NULL)
     {
         return -1;
     }
@@ -88,50 +92,13 @@ int add(RECORD record)
     return 0;
 }
 
-int del(KEY key)
-{
-    RECORD *current, *previous;
-    int index;
-
-    index = hash(key);
-
-    // ハッシュ値が指すバケット
-    current = table[index];
-
-    previous = NULL;
-
-    // ハッシュ値のバケットから伸びてる連結リストが尽きるまで
-    while (current != NULL)
-    {
-        if (keyequal(key, current->key))
-        {
-            if (previous == NULL)
-            {
-                // キーが先頭でみつかったらtable[index]が次のやつにうつす
-                table[index] = current->next;
-            }
-            else
-            {
-                // キーが先頭以外でみつかったら一つ前にずらす
-                previous->next = current->next;
-            }
-
-            free(current);
-            return 0; // 削除成功
-        }
-        previous = current;
-        current = current->next;
-    }
-    return -1; // 削除対象のキーが見つからない場合
-}
-
-void createMap(char P[], int length)
+void createMap(RECORD **table, char P[], int length)
 {
     int i = 0;
 
     for (i = 0; i < length; i++)
     {
-        if (search(P[i]) == NULL)
+        if (search(table, P[i]) == NULL)
         {
             DATA data;
             data.value = length - i - 1;
@@ -139,7 +106,7 @@ void createMap(char P[], int length)
             RECORD record;
             record.key = P[i];
             record.data = data;
-            add(record);
+            add(table, record);
         }
     }
 }
@@ -165,11 +132,11 @@ int main()
 
     init();
 
-    createMap(P, m);
+    createMap(p_table, P, m);
 
-    for (int i = 0; i < BUCKET_SIZE; i++)
+    for (int i = 0; i < P_BUCKET_SIZE; i++)
     {
-        RECORD *p = table[i];
+        RECORD *p = p_table[i];
         while (p != NULL)
         {
             printf("Key: '%c', Value: %d\n", p->key, p->data.value);
@@ -184,23 +151,23 @@ int main()
     }
 
     // S[i] を探してsearch関数を呼び出す
-    for (i = 0; i < m - 1; i++)
-    {
-        DATA *data = search(S[i]); // searchの結果を一時変数に保存
-        if (data != NULL)
-        { // NULLチェック
-            printf("S[%c] = %d\n", i, data->value);
-        }
-        else
-        {
-            printf("S[%c] = Not Found\n", i);
-        }
-    }
+    /* for (i = 0; i < m - 1; i++)
+     {
+         DATA *data = search(p_table, S[i]); // searchの結果を一時変数に保存
+         if (data != NULL)
+         { // NULLチェック
+             printf("S[%c] = %d\n", i, data->value);
+         }
+         else
+         {
+             printf("S[%c] = Not Found\n", i);
+         }
+     }*/
 
     /* for (i = 0; i < m; i++)
        printf("S[%c] = %d\n", i, S[i]);*/
 
-    while (i < n - m + 1)
+    /*while (i < n - m + 1)
     {
         j = m - 1;
         while (T[i + j] == P[j] && j >= 0)
@@ -222,7 +189,7 @@ int main()
                 i++; // デフォルトのスキップ量
             }
         }
-    }
+    }*/
 
     return 0;
 }
