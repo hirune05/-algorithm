@@ -62,12 +62,12 @@ DATA *search(RECORD **table, KEY key)
     return NULL; // 見つからない時にはNULLを返す
 }
 
-int add(RECORD **table, RECORD record)
+int add(RECORD **table, RECORD *record)
 {
     RECORD *p;
     int index;
 
-    if (search(table, record.key) != NULL)
+    if (search(table, record->key) != NULL)
     {
         return -1;
     }
@@ -80,10 +80,10 @@ int add(RECORD **table, RECORD record)
     }
 
     /*ハッシュ関数でrecord.keyのハッシュ値を求める*/
-    index = hash(record.key);
+    index = hash(record->key);
 
-    p->key = record.key;
-    p->data = record.data;
+    p->key = record->key;
+    p->data = record->data;
 
     /* table[index]に新しく作成したレコードを挿入する*/
     p->next = table[index];
@@ -107,7 +107,7 @@ void p_createMap(RECORD **table, char P[], int length)
             RECORD record;
             record.key = P[i];
             record.data = data;
-            add(table, record);
+            add(table, &record);
         }
     }
 }
@@ -132,7 +132,7 @@ void s_createMap(RECORD **table, char S[], int s_length, int p_length)
             RECORD record;
             record.key = S[i];
             record.data = data;
-            add(table, record);
+            add(table, &record);
         }
     }
 }
