@@ -92,8 +92,9 @@ int add(RECORD **table, RECORD record)
     return 0;
 }
 
-void createMap(RECORD **table, char P[], int length)
+void p_createMap(RECORD **table, char P[], int length)
 {
+    printf("✅ p_createMap\n");
     int i = 0;
 
     for (i = 0; i < length; i++)
@@ -111,10 +112,37 @@ void createMap(RECORD **table, char P[], int length)
     }
 }
 
+void s_createMap(RECORD **table, char S[], int length)
+{
+    int i = 0;
+    printf("✅ s_createMap\n");
+    for (i = 0; i < length; i++)
+    {
+        // printf("S[%i] = %c\n", i, S[i]);
+
+        if (search(table, S[i]) == NULL)
+        {
+            DATA data;
+            if (search(p_table, S[i]) != NULL)
+            {
+                data.value = search(p_table, S[i])->value;
+            }
+            else
+            {
+                data.value = 5;
+            }
+            RECORD record;
+            record.key = S[i];
+            record.data = data;
+            add(table, record);
+        }
+    }
+}
+
 int main()
 {
     // テキスト
-    char T[] = "she sells sea shells on the sea shore";
+    char *T = "she sells sea shells on the sea shore";
     // パターン
     char *P = "shell";
     char *P_k = "shel"; // 文字の種類
@@ -129,10 +157,11 @@ int main()
     int j = 0; // パターンに対して照合を行う位置
     int times = 0;
     int charLength = 0;
+    char a;
 
     init();
 
-    createMap(p_table, P, m);
+    p_createMap(p_table, P, m);
 
     for (int i = 0; i < P_BUCKET_SIZE; i++)
     {
@@ -144,52 +173,38 @@ int main()
         }
     }
 
-    // テキスト中のすべての文字について配列Sの値をmに初期化する
-    for (i = 0; i < charKindNum; i++)
+    s_createMap(s_table, T, n);
+
+    for (int i = 0; i < S_BUCKET_SIZE; i++)
     {
-        S[i] = m;
+        RECORD *p = s_table[i];
+        while (p != NULL)
+        {
+            printf("Key: '%c', Value: %d\n", p->key, p->data.value);
+            p = p->next;
+        }
     }
 
-    // S[i] を探してsearch関数を呼び出す
-    /* for (i = 0; i < m - 1; i++)
-     {
-         DATA *data = search(p_table, S[i]); // searchの結果を一時変数に保存
-         if (data != NULL)
-         { // NULLチェック
-             printf("S[%c] = %d\n", i, data->value);
-         }
-         else
-         {
-             printf("S[%c] = Not Found\n", i);
-         }
-     }*/
-
-    /* for (i = 0; i < m; i++)
-       printf("S[%c] = %d\n", i, S[i]);*/
-
-    /*while (i < n - m + 1)
+    i = 0;
+    while (i < n - m + 1)
     {
         j = m - 1;
+        a = T[i + j];
         while (T[i + j] == P[j] && j >= 0)
-            j--;
-        if (j < 0)
         {
-            printf("%d\n", i);
-            i += m;
+            j--;
+        }
+        if (j == -1)
+        {
+            printf("✅ パターンが見つかりました\n");
+            printf("%d", i);
+            return 0;
         }
         else
         {
-            DATA *data = search(T[i + j]);
-            if (data != NULL)
-            { // NULLチェック
-                i = i + data->value;
-            }
-            else
-            {
-                i++; // デフォルトのスキップ量
-            }
+            i += search(s_table, T[i + j])->value;
         }
-    }*/
-
+    }
+    printf("✅ パターンが見つかりませんでした\n");
     return 0;
 }
