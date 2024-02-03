@@ -57,9 +57,10 @@ int main(void)
         for (int k = 0; k < i + 3; k++)
             printf(" ");
         printf("%s\n\n", P);
-
+        times++;
         i++;
     }
     printf("一致しない (テキスト(%s)中でパターン(%s)は見つかりませんでした)\n", T, P);
+    printf("比較回数は%d回でした。\n", times);
     return 0;
 }

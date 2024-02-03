@@ -112,14 +112,12 @@ void p_createMap(RECORD **table, char P[], int length)
     }
 }
 
-void s_createMap(RECORD **table, char S[], int length)
+void s_createMap(RECORD **table, char S[], int s_length, int p_length)
 {
     int i = 0;
     printf("✅ s_createMap\n");
-    for (i = 0; i < length; i++)
+    for (i = 0; i < s_length; i++)
     {
-        // printf("S[%i] = %c\n", i, S[i]);
-
         if (search(table, S[i]) == NULL)
         {
             DATA data;
@@ -129,7 +127,7 @@ void s_createMap(RECORD **table, char S[], int length)
             }
             else
             {
-                data.value = 5;
+                data.value = p_length;
             }
             RECORD record;
             record.key = S[i];
@@ -145,13 +143,8 @@ int main()
     char *T = "she sells sea shells on the sea shore";
     // パターン
     char *P = "shell";
-    char *P_k = "shel"; // 文字の種類
-
-    int n = 38;          // テキストの文字数
-    int m = 5;           // パターンの文字数
-    int charKindNum = 9; // テキスト中の文字の種類数
-
-    char S[charKindNum]; // スキップテーブル
+    int n = 38; // テキストの文字数
+    int m = 5;  // パターンの文字数
 
     int i = 0; // テキストに対して照合を行う位置の先頭
     int j = 0; // パターンに対して照合を行う位置
@@ -173,7 +166,7 @@ int main()
         }
     }
 
-    s_createMap(s_table, T, n);
+    s_createMap(s_table, T, n, m);
 
     for (int i = 0; i < S_BUCKET_SIZE; i++)
     {
@@ -197,7 +190,7 @@ int main()
         a = T[i + j];
         while (T[i + j] == P[j] && j >= 0)
         {
-            if (j - 4 != 0)
+            if (j - (m - 1) != 0)
                 printf("   ");
             printf("%s\n", T);
             for (int k = 0; k < i + j + 3; k++)
@@ -217,7 +210,7 @@ int main()
         }
         else
         {
-            if (j - 4 != 0)
+            if (j - (m - 1) != 0)
                 printf("   ");
             printf("%s\n", T);
             for (int k = 0; k < i + j + 3; k++)
@@ -226,10 +219,8 @@ int main()
             for (int k = 0; k < i + 3; k++)
                 printf(" ");
             printf("%s\n\n", P);
-            printf("T[i + 4]=%c\n", T[i + j]);
-            printf("i = %d\n", i);
-            i += search(s_table, T[i + 4])->value;
-            printf("i = %d\n", i);
+            i += search(s_table, T[i + (m - 1)])->value;
+            times++;
         }
     }
     printf("❎ パターンが見つかりませんでした\n");
