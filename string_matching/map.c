@@ -188,11 +188,16 @@ int main()
     i = 0;
     while (i < n - m + 1)
     {
+        printf("照合開始位置: %d\n", i);
         j = m - 1;
         a = T[i + j];
         while (T[i + j] == P[j] && j >= 0)
         {
+            printf("%s\n", T);
+            printf("+\n");
+            printf("%s\n\n", P);
             j--;
+            times++;
         }
         if (j == -1)
         {
@@ -202,9 +207,14 @@ int main()
         }
         else
         {
+            printf("%s\n", T);
+            printf("|\n");
+            printf("%s\n\n", P);
             i += search(s_table, T[i + j])->value;
         }
     }
-    printf("✅ パターンが見つかりませんでした\n");
+    printf("❎ パターンが見つかりませんでした\n");
+    printf("文字比較回数: %d\n", times);
+
     return 0;
 }
