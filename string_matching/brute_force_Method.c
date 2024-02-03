@@ -42,7 +42,7 @@ int main(void)
 
         if (j == m)
         {
-            printf("テキスト(%s)中で最初に出てくるパターン(%s)の位置は%dです\n", T, P, i);
+            printf("テキスト index=%dの位置にパターン%sがありました\n", i, P);
             printf("比較回数は%d回でした。\n", times);
             return 0;
         }

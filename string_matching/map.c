@@ -188,33 +188,52 @@ int main()
     i = 0;
     while (i < n - m + 1)
     {
-        printf("照合開始位置: %d\n", i);
+        printf("%d", i);
+        if (i < 10)
+            printf("  ");
+        else
+            printf(" ");
         j = m - 1;
         a = T[i + j];
         while (T[i + j] == P[j] && j >= 0)
         {
+            if (j - 4 != 0)
+                printf("   ");
             printf("%s\n", T);
+            for (int k = 0; k < i + j + 3; k++)
+                printf(" ");
             printf("+\n");
+            for (int k = 0; k < i + 3; k++)
+                printf(" ");
             printf("%s\n\n", P);
             j--;
             times++;
         }
         if (j == -1)
         {
-            printf("✅ パターンが見つかりました\n");
-            printf("%d", i);
+            printf("テキスト index=%dの位置にパターン%sがありました\n", i, P);
+            printf("比較回数は%dでした\n", times);
             return 0;
         }
         else
         {
+            if (j - 4 != 0)
+                printf("   ");
             printf("%s\n", T);
+            for (int k = 0; k < i + j + 3; k++)
+                printf(" ");
             printf("|\n");
+            for (int k = 0; k < i + 3; k++)
+                printf(" ");
             printf("%s\n\n", P);
-            i += search(s_table, T[i + j])->value;
+            printf("T[i + 4]=%c\n", T[i + j]);
+            printf("i = %d\n", i);
+            i += search(s_table, T[i + 4])->value;
+            printf("i = %d\n", i);
         }
     }
     printf("❎ パターンが見つかりませんでした\n");
-    printf("文字比較回数: %d\n", times);
+    printf("比較回数は%dでした\n", times);
 
     return 0;
 }
