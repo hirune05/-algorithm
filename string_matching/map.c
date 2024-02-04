@@ -121,9 +121,10 @@ void s_createMap(RECORD **table, char S[], int s_length, int p_length)
         if (search(table, S[i]) == NULL)
         {
             DATA data;
-            if (search(p_table, S[i]) != NULL)
+            DATA *pData = search(p_table, S[i]);
+            if (pData != NULL)
             {
-                data.value = search(p_table, S[i])->value;
+                data.value = pData->value;
             }
             else
             {
@@ -149,8 +150,6 @@ int main()
     int i = 0; // テキストに対して照合を行う位置の先頭
     int j = 0; // パターンに対して照合を行う位置
     int times = 0;
-    int charLength = 0;
-    char a;
 
     init();
 
@@ -187,7 +186,6 @@ int main()
         else
             printf(" ");
         j = m - 1;
-        a = T[i + j];
         while (T[i + j] == P[j] && j >= 0)
         {
             if (j - (m - 1) != 0)
