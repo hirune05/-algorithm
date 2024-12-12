@@ -37,6 +37,6 @@ int main()
     {
         printf("キー：%dはx[%d]にあります。\n", key, index);
     }
-    printf("キー：%dはx[%d]にあります。\n", key, index);
+    // printf("キー：%dはx[%d]にあります。\n", key, index);
     return 0;
 }
